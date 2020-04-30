@@ -37,7 +37,7 @@ Vue.use(Element, {
 })
 
 // register global utility filters
-Object.keys(filters).forEach(key => {
+Object.keys(filters).forEach((key) => {
   Vue.filter(key, filters[key])
 })
 
@@ -47,5 +47,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App)
 })

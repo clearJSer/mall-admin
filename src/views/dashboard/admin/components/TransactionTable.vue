@@ -11,7 +11,7 @@
       </template>
     </el-table-column>
     <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="{row}">
+      <template slot-scope="{ row }">
         <el-tag :type="row.status | statusFilter">
           {{ row.status }}
         </el-tag>
@@ -38,15 +38,22 @@ export default {
   },
   data() {
     return {
-      list: null
+      list: [
+        {
+          order_no: '12332',
+          timestamp: '2020-04-03',
+          username: '3sdfljas',
+          price: '99.2'
+        }
+      ]
     }
   },
   created() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     fetchData() {
-      transactionList().then(response => {
+      transactionList().then((response) => {
         this.list = response.data.items.slice(0, 8)
       })
     }

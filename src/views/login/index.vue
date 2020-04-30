@@ -73,14 +73,14 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入正确的用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length === 0) {
+        callback(new Error('密码不能为空'))
       } else {
         callback()
       }
@@ -88,7 +88,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: 'admin'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -146,8 +146,15 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true
+          const { username, password } = this.loginForm
+          const params = {
+            captchaRandStr: 'admin',
+            captchaTicket: 'admin',
+            password: password,
+            userIdentifier: username
+          }
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch('user/login', params)
             .then(() => {
               this.$router.push({
                 path: this.redirect || '/',
