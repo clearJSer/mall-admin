@@ -31,6 +31,12 @@ const productRouter = {
       meta: { title: '试用活动类型', noCache: true }
     },
     {
+      path: 'trial-specs',
+      component: () => import('@/views/product/specs'),
+      name: 'trial-specs',
+      meta: { title: '试用品规格', noCache: true }
+    },
+    {
       path: 'applicant-requirement',
       component: () => import('@/views/product/applicantRequirement'),
       name: 'applicant-requirement',

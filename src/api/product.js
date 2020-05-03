@@ -167,3 +167,31 @@ export function deleteWarnings(id) {
     method: 'delete'
   })
 }
+// 试用品规格
+export function getSpecs() {
+  return request({
+    url: '/public/product-specs',
+    method: 'get'
+  })
+}
+export function addSpecs(data) {
+  return request({
+    data,
+    url: '/cms/product-specs',
+    method: 'post'
+  })
+}
+export function editSpecs(data) {
+  const { id } = data
+  return request({
+    data,
+    url: '/cms/product-specs/' + id,
+    method: 'put'
+  })
+}
+export function deleteSpecs(id) {
+  return request({
+    url: '/cms/product-specs/' + id,
+    method: 'delete'
+  })
+}
