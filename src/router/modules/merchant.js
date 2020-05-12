@@ -19,17 +19,17 @@ const merchantRouter = {
       meta: { title: '商家充值', noCache: true }
     },
     {
-      path: 'recharge',
-      component: () => import('@/views/shike-merchant/recharge'),
-      name: 'recharge',
-      meta: { title: '商家充值', noCache: true }
-    },
-    {
-      path: 'recharge',
-      component: () => import('@/views/shike-merchant/recharge'),
-      name: 'recharge',
-      meta: { title: '商家充值', noCache: true }
+      path: 'audit',
+      component: () => import('@/views/shike-merchant/audit'),
+      name: 'audit',
+      meta: { title: '商家活动审核', noCache: true }
     }
+    // {
+    //   path: 'recharge',
+    //   component: () => import('@/views/shike-merchant/recharge'),
+    //   name: 'recharge',
+    //   meta: { title: '商家充值', noCache: true }
+    // }
   ]
 }
 

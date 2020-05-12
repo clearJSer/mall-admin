@@ -1,37 +1,38 @@
 <!--  -->
 <template>
   <div class="components-container">
-    <aside> <i class="el-icon-chat-line-round" /> 为某个平台商户充值</aside>
-    <el-form :inline="true" :model="searchFormRecharge" class="demo-form-inline">
+    <aside> <i class="el-icon-chat-line-round" /> 试用报告申诉处理界面</aside>
+    <!-- <el-form :inline="true" :model="searchFormRecharge" class="demo-form-inline">
       <el-form-item label="手机号">
         <el-input v-model="searchFormRecharge.phone" placeholder="请输入" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="search">查询</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="userAuthId" label="id" width="180" />
-      <el-table-column prop="merchantName" label="昵称" width="180" />
-      <el-table-column prop="phone" label="手机号" />
-      <el-table-column prop="balance" label="账户余额(元)" width="280" />
+      <el-table-column prop="id" label="id" width="180" />
+      <el-table-column prop="fromUserAuthId" label="fromUserAuthId" width="180" />
+      <el-table-column prop="toUserAuthId" label="toUserAuthId" width="180" />
+      <el-table-column prop="trialTaskId" label="试用报告ID" />
+      <el-table-column prop="content" label="内容" />
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click.native.prevent="open(scope.row.userAuthId)">
-            充值
+          <el-button type="primary" size="small" @click.native.prevent="open(scope.row)">
+            回复申诉
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div class="pagination-box">
+    <!-- <div class="pagination-box">
       <el-pagination background layout="prev, pager, next" :total="pagination.total" :page-size="pagination.pageSize" @current-change="handleCurrentChange" />
-    </div>
-    <el-dialog title="充值金额" :visible.sync="centerDialogVisible" width="30%" center>
-      <h2>充值金额（元）：</h2>
-      <el-input v-model.number="amount" placeholder="请输入充值金额" />
+    </div> -->
+    <el-dialog title="回复申诉" :visible.sync="centerDialogVisible" width="30%" center>
+      <h2>回复处理意见：</h2>
+      <el-input v-model="content" type="textarea" :rows="3" placeholder="请输入内容" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submit">确定充值</el-button>
+        <el-button type="primary" @click="submit">确定回复</el-button>
       </span>
     </el-dialog>
   </div>
@@ -47,8 +48,9 @@ export default {
   data() {
     // 这里存放数据
     return {
-      amount: '',
+      content: '',
       userId: '',
+      rowObject: null,
       centerDialogVisible: false,
       searchFormRecharge: {
         phone: '18611111111'
@@ -78,27 +80,26 @@ export default {
   },
   // 方法集合
   methods: {
-    search() {
-      if (this.searchFormRecharge.phone !== '') {
-        request({
-          url: '/cms/profiles/merchant-phone-number',
-          method: 'get',
-          params: { merchantPhoneNumber: this.searchFormRecharge.phone }
-        }).then((data) => {
-          this.tableData = [data]
-        })
-      }
-    },
-    open(id) {
-      this.userId = id
+    // search() {
+    //   if (this.searchFormRecharge.phone !== '') {
+    //     request({
+    //       url: '/cms/profiles/merchant-phone-number',
+    //       method: 'get',
+    //       params: { merchantPhoneNumber: this.searchFormRecharge.phone }
+    //     }).then((data) => {
+    //       this.tableData = [data]
+    //     })
+    //   }
+    // },
+    open(row) {
+      this.rowObject = row
       this.centerDialogVisible = true
     },
     initData() {
       // request({ url: '/cms/profiles', method: 'get', params: { currPage: 1, isMerchant: true, maxItemPerPage: 20 })
       request({
-        url: '/cms/profiles',
-        method: 'get',
-        params: { currPage: 1, isMerchant: true, maxItemPerPage: 20 }
+        url: '/cms/customer-appeals',
+        method: 'get'
       }).then((data) => {
         this.tableData = data
       })
@@ -108,16 +109,22 @@ export default {
       this.initData()
     },
     submit() {
-      if (this.amount !== '') {
+      if (this.rowObject !== null) {
         request({
-          url: `/cms/profiles/balance/${Number(this.userId)}/${Number(this.amount)}`,
-          method: 'post'
+          url: `/cms/customer-appeal`,
+          method: 'post',
+          data: {
+            content: this.content,
+            toUserAuthId: this.rowObject.fromUserAuthId,
+            trialTaskId: this.rowObject.trialTaskId
+          }
         })
           .then((data) => {
             this.centerDialogVisible = false
+            this.rowObject = null
             this.$notify({
               title: '成功',
-              message: '充值成功',
+              message: '回复成功',
               type: 'success'
             })
             this.initData()
@@ -128,7 +135,7 @@ export default {
       } else {
         this.$notify({
           title: '警告',
-          message: '充值金额不能为空',
+          message: '请先选中要处理的记录',
           type: 'warning'
         })
       }
